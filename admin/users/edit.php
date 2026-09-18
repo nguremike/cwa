@@ -54,7 +54,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Save failed: ' . $e->getMessage();
         }
     }
-    $user = array_merge($user, $_POST);
+    // Guard against missing keys from partial re-submits
+    $posted = array_merge([
+        'full_name' => $user['full_name'],
+        'email'     => $user['email'],
+        'phone'     => $user['phone'],
+        'role_id'   => $user['role_id'],
+        'center_id' => $user['center_id'],
+        'jumuiya_id' => $user['jumuiya_id'],
+        'status'    => $user['status'],
+    ], $_POST);
+    $user = array_merge($user, $posted);
 }
 
 $pageTitle = 'Edit User';
@@ -130,8 +140,9 @@ require __DIR__ . '/../../templates/layout/header.php';
         <div class="col-md-4">
             <label class="form-label small">Status</label>
             <select name="status" class="form-select">
+                <?php $curStatus = $user['status'] ?? 'ACTIVE'; ?>
                 <?php foreach (['ACTIVE', 'INACTIVE', 'LOCKED'] as $s): ?>
-                    <option value="<?= $s ?>" <?= $user['status'] === $s ? 'selected' : '' ?>><?= $s ?></option>
+                    <option value="<?= $s ?>" <?= $curStatus === $s ? 'selected' : '' ?>><?= $s ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

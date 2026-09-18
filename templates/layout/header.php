@@ -35,25 +35,36 @@ $pageTitle = $pageTitle ?? 'Dashboard';
             <i class="fa-solid fa-gauge-high me-1"></i> Dashboard
           </a>
         </li>
-        <?php if (user_can('user.view') || user_can('*')): ?>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
-            <i class="fa-solid fa-user-shield me-1"></i> Administration
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/users/">
-              <i class="fa-solid fa-users me-2"></i> Users</a></li>
-            <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/roles/">
-              <i class="fa-solid fa-key me-2"></i> Roles</a></li>
-            <?php if (user_can('audit.view') || user_can('*')): ?>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/audit/">
-              <i class="fa-solid fa-clipboard-list me-2"></i> Audit Log</a></li>
+        <?php if (user_can('user.view') || user_can('center.view') || user_can('jumuiya.view') || user_can('*')): ?>
+            <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                <i class="fa-solid fa-user-shield me-1"></i> Administration
+            </a>
+            <ul class="dropdown-menu">
+                <?php if (user_can('center.view') || user_can('*')): ?>
+                <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/centers/">
+                    <i class="fa-solid fa-diagram-project me-2"></i> Centers</a></li>
+                <?php endif; ?>
+                <?php if (user_can('jumuiya.view') || user_can('*')): ?>
+                <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/jumuiyas/">
+                    <i class="fa-solid fa-people-group me-2"></i> Jumuiyas</a></li>
+                <?php endif; ?>
+                <?php if (user_can('user.view') || user_can('*')): ?>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/users/">
+                    <i class="fa-solid fa-users me-2"></i> Users</a></li>
+                <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/roles/">
+                    <i class="fa-solid fa-key me-2"></i> Roles</a></li>
+                <?php endif; ?>
+                <?php if (user_can('audit.view') || user_can('*')): ?>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/audit/">
+                    <i class="fa-solid fa-clipboard-list me-2"></i> Audit Log</a></li>
+                <?php endif; ?>
+            </ul>
+            </li>
             <?php endif; ?>
-          </ul>
-        </li>
-        <?php endif; ?>
-      </ul>
+            </ul>
 
       <?php if ($user): ?>
       <ul class="navbar-nav">
