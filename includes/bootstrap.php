@@ -16,6 +16,8 @@ require_once __DIR__ . '/../classes/Db.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/csrf.php';
 require_once __DIR__ . '/parish.php';
+require_once __DIR__ . '/../classes/FinancialYear.php';
+require_once __DIR__ . '/schedule_lock.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_name($config['session']['name']);
