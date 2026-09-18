@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * One-time setup script. DELETE THIS FILE after running.
+ * Creates (or resets) the SUPER_ADMIN user.
+ */
+require __DIR__ . '/includes/bootstrap.php';
+
+// Block re-run once an admin exists AND has logged in
+$existing = Db::one("SELECT id, last_login_at FROM users WHERE username = 'superadmin'");
+if ($existing && $existing['last_login_at']) {
+    exit('Setup already completed. Delete setup.php now.');
+}
+
+$plain = 'Admin@123';
+$hash  = password_hash($plain, PASSWORD_BCRYPT);
+$roleId = (int) (Db::one("SELECT id FROM roles WHERE name='SUPER_ADMIN'")['id'] ?? 0);
+if (!$roleId) {
+    exit('Roles not seeded. Run the Step 1 SQL first.');
+}
+
+if ($existing) {
+    Db::update(
+        'users',
+        ['password_hash' => $hash, 'status' => 'ACTIVE', 'role_id' => $roleId],
+        'id = :id',
+        ['id' => $existing['id']]
+    );
+    echo "SUPER_ADMIN password reset.<br>";
+} else {
+    Db::insert('users', [
+        'username'      => 'superadmin',
+        'full_name'     => 'System Administrator',
+        'email'         => 'admin@cwa.local',
+        'password_hash' => $hash,
+        'role_id'       => $roleId,
+        'status'        => 'ACTIVE',
+    ]);
+    echo "SUPER_ADMIN created.<br>";
+}
+echo "Username: <b>superadmin</b><br>Password: <b>{$plain}</b><br>";
+echo "<br><b>Delete setup.php and change the password on first login.</b>";
