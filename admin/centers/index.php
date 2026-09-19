@@ -68,6 +68,8 @@ require __DIR__ . '/../../templates/layout/header.php';
     </div>
 </div>
 
+
+<?php require __DIR__ . '/../../templates/layout/footer.php'; ?>
 <script>
     $(function() {
         $('#tblCenters').DataTable({
@@ -99,4 +101,3 @@ require __DIR__ . '/../../templates/layout/header.php';
         });
     });
 </script>
-<?php require __DIR__ . '/../../templates/layout/footer.php'; ?>

@@ -48,18 +48,34 @@ $counts = [
         </div>
     </div>
 </div>
-<div class="row g-3">
-
-
-
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
+<?php $fy = FinancialYear::current(); ?>
+<?php if ($fy): ?>
+    <div class="card mt-4 shadow-sm border-0">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
                 <div class="text-muted small">Current Financial Year</div>
-                <div class="h5 mb-0"><?= e((string)current_year()) ?></div>
+                <div class="h5 mb-0">
+                    <?= (int)$fy['year'] ?>
+                    <span class="badge bg-success ms-2"><?= e($fy['status']) ?></span>
+                </div>
             </div>
+            <?php if (user_can('settings.view') || user_can('*')): ?>
+                <div>
+                    <a href="<?= e($config['app']['url']) ?>/admin/schedules/?year=<?= (int)$fy['year'] ?>"
+                        class="btn btn-outline-primary btn-sm">
+                        <i class="fa-solid fa-table-list me-1"></i> View schedules
+                    </a>
+                    <a href="<?= e($config['app']['url']) ?>/admin/financial-years/"
+                        class="btn btn-outline-secondary btn-sm">
+                        <i class="fa-solid fa-calendar-days me-1"></i> Financial Years
+                    </a>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
+<?php endif; ?>
+<div class="row g-3">
+
     <div class="col-md-3">
         <div class="card shadow-sm border-0">
             <div class="card-body">

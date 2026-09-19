@@ -18,6 +18,12 @@ require_once __DIR__ . '/csrf.php';
 require_once __DIR__ . '/parish.php';
 require_once __DIR__ . '/../classes/FinancialYear.php';
 require_once __DIR__ . '/schedule_lock.php';
+require_once __DIR__ . '/../classes/Member.php';
+require_once __DIR__ . '/../classes/Payment.php';
+require_once __DIR__ . '/../classes/AllocationEngine.php';
+
+
+
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_name($config['session']['name']);

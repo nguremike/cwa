@@ -29,6 +29,7 @@ function permission_map(): array
             'report.export',
             'user.view',
             'settings.view',
+            'settings.edit',
             'audit.view',
         ],
 

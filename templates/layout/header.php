@@ -35,6 +35,30 @@ $pageTitle = $pageTitle ?? 'Dashboard';
             <i class="fa-solid fa-gauge-high me-1"></i> Dashboard
           </a>
         </li>
+        <?php if (user_can('member.view') || user_can('*')): ?>
+            <li class="nav-item">
+            <a class="nav-link" href="<?= e($config['app']['url']) ?>/members/">
+                <i class="fa-solid fa-users me-1"></i> Members
+            </a>
+            </li>
+            <?php endif; ?>
+
+            <?php if (user_can('payment.view') || user_can('*')): ?>
+                <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                    <i class="fa-solid fa-cash-register me-1"></i> Payments
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/payments/">
+                    <i class="fa-solid fa-receipt me-2"></i> Payment History</a></li>
+                    <?php if (user_can('payment.create') || user_can('*')): ?>
+                    <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/payments/create.php">
+                        <i class="fa-solid fa-plus me-2"></i> Record Contribution</a></li>
+                    <?php endif; ?>
+                </ul>
+                </li>
+            <?php endif; ?>
+
         <?php if (user_can('user.view') || user_can('center.view') || user_can('jumuiya.view') || user_can('*')): ?>
             <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
@@ -48,6 +72,13 @@ $pageTitle = $pageTitle ?? 'Dashboard';
                 <?php if (user_can('jumuiya.view') || user_can('*')): ?>
                 <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/jumuiyas/">
                     <i class="fa-solid fa-people-group me-2"></i> Jumuiyas</a></li>
+                <?php endif; ?>
+                <?php if (user_can('settings.view') || user_can('*')): ?>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/financial-years/">
+                    <i class="fa-solid fa-calendar-days me-2"></i> Financial Years</a></li>
+                <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/schedules/">
+                    <i class="fa-solid fa-table-list me-2"></i> Contribution Schedules</a></li>
                 <?php endif; ?>
                 <?php if (user_can('user.view') || user_can('*')): ?>
                 <li><hr class="dropdown-divider"></li>

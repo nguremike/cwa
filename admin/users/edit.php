@@ -1,13 +1,10 @@
 <?php
 require __DIR__ . '/../../includes/auth.php';
+
 require_permission('user.edit');
 
 $id = (int)($_GET['id'] ?? 0);
-$user = Db::one("SELECT * FROM users WHERE id = :id", ['id' => $id]);
-if (!$user) {
-    http_response_code(404);
-    exit('User not found');
-}
+
 
 $roles   = Db::all("SELECT id, name FROM roles ORDER BY name");
 $centers = Db::all("SELECT id, name FROM centers WHERE status='ACTIVE' ORDER BY name");
@@ -69,6 +66,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $pageTitle = 'Edit User';
 require __DIR__ . '/../../templates/layout/header.php';
+
+$user = Db::one("SELECT * FROM users WHERE id = :id", ['id' => $id]);
+if (!$user) {
+    http_response_code(404);
+    exit('User not found');
+}
+
+
 ?>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="mb-0"><i class="fa-solid fa-user-pen me-2"></i>Edit User</h4>
@@ -160,6 +165,8 @@ require __DIR__ . '/../../templates/layout/header.php';
     </div>
 </form>
 
+
+<?php require __DIR__ . '/../../templates/layout/footer.php'; ?>
 <script>
     $(function() {
         const preJumuiya = <?= json_encode($user['jumuiya_id'] ?? '') ?>;
@@ -181,4 +188,3 @@ require __DIR__ . '/../../templates/layout/header.php';
         loadJumuiyas();
     });
 </script>
-<?php require __DIR__ . '/../../templates/layout/footer.php'; ?>

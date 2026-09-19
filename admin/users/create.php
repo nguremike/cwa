@@ -148,6 +148,8 @@ require __DIR__ . '/../../templates/layout/header.php';
     </div>
 </form>
 
+
+<?php require __DIR__ . '/../../templates/layout/footer.php'; ?>
 <script>
     $(function() {
         const preJumuiya = <?= json_encode($_POST['jumuiya_id'] ?? '') ?>;
@@ -169,4 +171,3 @@ require __DIR__ . '/../../templates/layout/header.php';
         loadJumuiyas();
     });
 </script>
-<?php require __DIR__ . '/../../templates/layout/footer.php'; ?>

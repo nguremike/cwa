@@ -54,14 +54,23 @@ class Db
 
     public static function begin(): void
     {
-        self::conn()->beginTransaction();
+        // self::conn()->beginTransaction();
+        if (!self::conn()->inTransaction()) {
+            self::conn()->beginTransaction();
+        }
     }
     public static function commit(): void
     {
-        self::conn()->commit();
+        // self::conn()->commit();
+        if (self::conn()->inTransaction()) {
+            self::conn()->commit();
+        }
     }
     public static function rollback(): void
     {
-        if (self::conn()->inTransaction()) self::conn()->rollBack();
+        // if (self::conn()->inTransaction()) self::conn()->rollBack();
+        if (self::conn()->inTransaction()) {
+            self::conn()->rollBack();
+        }
     }
 }

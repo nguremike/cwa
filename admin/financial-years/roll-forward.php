@@ -4,13 +4,12 @@ require_permission('settings.edit');
 
 header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') json_out(['ok' => false, 'error' => 'POST required'], 405);
-csrf_check($_POST['csrf'] ?? null);
-
-$id = (int)($_POST['id'] ?? 0);
-if ($id <= 0) json_out(['ok' => false, 'error' => 'Missing id'], 400);
-
+$params = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
 try {
+    csrf_check($params['csrf'] ?? null);
+    $id = (int)($params['id'] ?? 0);
+    if ($id <= 0) throw new RuntimeException('Missing id.');
+
     $res = FinancialYear::closeAndRollForward($id);
     json_out(['ok' => true, 'next_year' => $res['next_year'], 'copied' => $res['copied']]);
 } catch (Throwable $e) {

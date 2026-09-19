@@ -177,6 +177,8 @@ if (!$renderComponents) $renderComponents = ['REGISTRATION'];
     </div>
 </form>
 
+<?php require __DIR__ . '/../../templates/layout/footer.php'; ?>
+
 <script>
     $(function() {
         function recount() {
@@ -199,4 +201,3 @@ if (!$renderComponents) $renderComponents = ['REGISTRATION'];
         recount();
     });
 </script>
-<?php require __DIR__ . '/../../templates/layout/footer.php'; ?>
