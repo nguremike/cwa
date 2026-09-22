@@ -1,0 +1,57 @@
+@media print {
+  /* Hide everything that has this class */
+  .no-print,
+  .app-navbar,
+  .app-footer,
+  .navbar,
+  footer,
+  nav.main-nav,
+  .btn,
+  .dropdown-menu,
+  form[method="get"] {
+    display: none !important;
+  }
+
+  /* Neutral page background */
+  body,
+  main,
+  .card,
+  .container,
+  .container-fluid {
+    background: #fff !important;
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+
+  /* Keep tables readable */
+  .matrix-wrap {
+    overflow: visible !important;
+  }
+  .matrix-table {
+    font-size: 11px;
+  }
+  .matrix-table th,
+  .matrix-table td {
+    padding: 2px 4px !important;
+  }
+
+  /* Sticky columns become static so nothing clips */
+  .sticky-col {
+    position: static !important;
+  }
+
+  /* No page break inside a member's row */
+  tr {
+    page-break-inside: avoid;
+  }
+
+  /* Page header text */
+  .print-header {
+    display: block !important;
+  }
+}
+
+/* By default the print header is invisible on screen */
+.print-header {
+  display: none;
+}

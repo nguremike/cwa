@@ -115,6 +115,10 @@ require __DIR__ . '/../templates/layout/header.php';
                                 <a href="view.php?id=<?= (int)$m['id'] ?>" class="btn btn-sm btn-outline-primary" title="Profile">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
+                                <a href="../reports/member-statement.php?id=<?= (int)$m['id'] ?>"
+                                    class="btn btn-sm btn-outline-info" title="Statement">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                </a>
                                 <a href="edit.php?id=<?= (int)$m['id'] ?>" class="btn btn-sm btn-outline-secondary" title="Edit">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>

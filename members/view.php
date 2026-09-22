@@ -40,6 +40,9 @@ require __DIR__ . '/../templates/layout/header.php';
         <a href="edit.php?id=<?= $id ?>" class="btn btn-outline-primary btn-sm">
             <i class="fa-solid fa-pen me-1"></i> Edit
         </a>
+        <a href="../reports/member-statement.php?id=<?= $id ?>" class="btn btn-outline-info btn-sm">
+            <i class="fa-solid fa-file-invoice me-1"></i> Statement
+        </a>
         <a href="transfer.php?id=<?= $id ?>" class="btn btn-outline-warning btn-sm">
             <i class="fa-solid fa-right-left me-1"></i> Transfer
         </a>
