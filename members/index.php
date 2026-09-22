@@ -118,6 +118,16 @@ require __DIR__ . '/../templates/layout/header.php';
                                 <a href="edit.php?id=<?= (int)$m['id'] ?>" class="btn btn-sm btn-outline-secondary" title="Edit">
                                     <i class="fa-solid fa-pen"></i>
                                 </a>
+                                <!-- create a link to ledger file ledger.php?id=$m['id'] -->
+                                <a href="ledger.php?id=<?= (int)$m['id'] ?>" class="btn btn-sm btn-outline-info" title="Ledger">
+                                    <i class="fa-solid fa-file-lines"></i>
+                                </a>
+                                <a href="transfer.php?id=<?= (int)$m['id'] ?>" class="btn btn-sm btn-outline-warning" title="Transfer">
+                                    <i class="fa-solid fa-right-left"></i>
+                                </a>
+                                <a href="status.php?id=<?= (int)$m['id'] ?>" class="btn btn-sm btn-outline-danger" title="Status">
+                                    <i class="fa-solid fa-user-shield"></i>
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

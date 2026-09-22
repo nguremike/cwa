@@ -212,7 +212,7 @@ class Payment
         if (!$fy) return ['ok' => false, 'reason' => 'Financial year is missing.'];
         if ($fy['status'] !== 'OPEN') return ['ok' => false, 'reason' => 'Financial year is closed.'];
 
-        // Must be the most recent payment for this member/year/type
+        // Must be the most recent ACTIVE payment for this member/year/type
         $later = Db::one(
             "SELECT id FROM payments
               WHERE member_id = :m AND year = :y AND payment_type = :t
@@ -222,23 +222,35 @@ class Payment
         );
         if ($later) return ['ok' => false, 'reason' => 'A later payment exists for this member, year and type. Void the newer one first.'];
 
-        // If this payment created an advance that has since been consumed, disallow.
-        $alloc = self::allocations($paymentId);
-        $advanceCreated = 0.0;
-        $advanceUsed    = 0.0;
-        foreach ($alloc as $a) {
-            if ($a['component'] === 'ADVANCE' && $a['amount'] > 0) $advanceCreated += (float)$a['amount'];
-            if (($a['allocation_method'] ?? '') === 'ADJUSTMENT' && $a['amount'] > 0) $advanceUsed += (float)$a['amount'];
+        // Already corrected? Then further correction must go through void.
+        $adjusted = Db::one(
+            "SELECT id FROM payment_allocations
+              WHERE payment_id = :p
+                AND allocation_method IN ('MANUAL','ADJUSTMENT')
+              LIMIT 1",
+            ['p' => $paymentId]
+        );
+        if ($adjusted) {
+            return ['ok' => false, 'reason' => 'This payment has already been corrected. Void it and re-enter to change the split again.'];
         }
 
+        // If the payment created an advance, ensure it hasn't been consumed.
+        $alloc = Db::all(
+            "SELECT component, amount, allocation_method
+               FROM payment_allocations
+              WHERE payment_id = :p AND amount <> 0",
+            ['p' => $paymentId]
+        );
+        $advanceCreated = 0.0;
+        foreach ($alloc as $a) {
+            if ($a['component'] === 'ADVANCE' && $a['amount'] > 0) $advanceCreated += (float)$a['amount'];
+        }
         if ($advanceCreated > 0) {
             $bucket = (float)(Db::one(
                 "SELECT amount FROM member_advances
                   WHERE member_id = :m AND year = :y AND contribution_type = :t",
                 ['m' => (int)$p['member_id'], 'y' => (int)$p['year'], 't' => $p['payment_type']]
             )['amount'] ?? 0.0);
-
-            // If the current bucket is smaller than what this payment contributed, some has been consumed.
             if ($bucket + 0.0001 < $advanceCreated) {
                 return ['ok' => false, 'reason' => 'Advance created by this payment has already been partly used. Void instead.'];
             }

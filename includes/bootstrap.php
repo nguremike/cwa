@@ -21,6 +21,8 @@ require_once __DIR__ . '/schedule_lock.php';
 require_once __DIR__ . '/../classes/Member.php';
 require_once __DIR__ . '/../classes/Payment.php';
 require_once __DIR__ . '/../classes/AllocationEngine.php';
+require_once __DIR__ . '/../classes/Report.php';
+
 
 
 

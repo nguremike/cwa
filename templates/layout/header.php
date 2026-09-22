@@ -51,12 +51,27 @@ $pageTitle = $pageTitle ?? 'Dashboard';
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/payments/">
                     <i class="fa-solid fa-receipt me-2"></i> Payment History</a></li>
+                    <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/payments/voids.php">
+                    <i class="fa-solid fa-ban me-2"></i> Voided Payments</a></li>
                     <?php if (user_can('payment.create') || user_can('*')): ?>
                     <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/payments/create.php">
                         <i class="fa-solid fa-plus me-2"></i> Record Contribution</a></li>
                     <?php endif; ?>
                 </ul>
                 </li>
+            <?php endif; ?>
+
+            <?php if (user_can('report.view') || user_can('*')): ?>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                <i class="fa-solid fa-chart-column me-1"></i> Reports
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/reports/registration-matrix.php">
+                  <i class="fa-solid fa-table-cells me-2"></i> Registration Matrix</a></li>
+                <!-- Welfare Matrix, Arrears, Combined — added in later steps -->
+              </ul>
+            </li>
             <?php endif; ?>
 
         <?php if (user_can('user.view') || user_can('center.view') || user_can('jumuiya.view') || user_can('*')): ?>

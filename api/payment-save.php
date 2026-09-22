@@ -28,8 +28,17 @@ try {
         $rawLines = $_POST['lines'] ?? [];
         if (!is_array($rawLines) || !$rawLines) throw new RuntimeException('Manual allocation requires at least one line.');
 
-        // Re-build an ordered structure to validate components/months
-        $structure = $type === 'OTHER' ? null : AllocationEngine::outstandingStructure($memberId, $year, $type);
+        // Build the acceptable set of (component, month) for this member/year/type
+        $allowed = [];
+        if ($type === 'OTHER') {
+            $allowed['OTHER|'] = true;
+        } else {
+            $structure = AllocationEngine::outstandingStructure($memberId, $year, $type);
+            foreach ($structure['lines'] as $l) {
+                $k = $l['component'] . '|' . ($l['month'] ?? '');
+                $allowed[$k] = true;
+            }
+        }
 
         $manual = [];
         $sum    = 0.0;
@@ -39,6 +48,11 @@ try {
             $amt       = round((float)($l['amount'] ?? 0), 2);
             if ($amt < 0) throw new RuntimeException('Manual allocation cannot be negative.');
             if ($amt == 0.0) continue;
+
+            $k = $component . '|' . ($month ?? '');
+            if (!isset($allowed[$k])) {
+                throw new RuntimeException("Manual line does not match an outstanding item: {$k}.");
+            }
             $sum += $amt;
             $manual[] = [
                 'component' => $component,
@@ -50,6 +64,7 @@ try {
         $sum = round($sum, 2);
         $unallocated = round($amount - $sum, 2);
         if ($unallocated < 0) throw new RuntimeException('Manual allocations exceed the payment amount.');
+
         if ($unallocated > 0) {
             $manual[] = [
                 'component' => 'ADVANCE',
@@ -59,6 +74,7 @@ try {
                 'notes'     => 'Unallocated remainder to advance',
             ];
         }
+
         $plan = [
             'allocations'     => $manual,
             'advance_used'    => 0.0,

@@ -8,7 +8,25 @@ if (!$p) {
     http_response_code(404);
     exit('Payment not found');
 }
-$alloc = Payment::allocations($id);
+// $alloc = Payment::allocations($id);
+// Effective allocation for display: sum signed amounts per (component, month),
+// then show only the positive results.
+$allocRows = Db::all(
+    "SELECT component, month,
+            COALESCE(SUM(amount),0) AS amount
+       FROM payment_allocations
+      WHERE payment_id = :id
+      GROUP BY component, month
+      HAVING amount <> 0
+      ORDER BY id",
+    ['id' => $id]
+);
+$alloc = array_map(fn($r) => [
+    'component'         => $r['component'],
+    'month'             => $r['month'],
+    'amount'            => (float)$r['amount'],
+    'allocation_method' => 'MANUAL',
+], $allocRows);
 
 $pageTitle = 'Receipt ' . $p['receipt_no'];
 require __DIR__ . '/../templates/layout/header.php';
@@ -94,6 +112,32 @@ require __DIR__ . '/../templates/layout/header.php';
                         <a href="void.php?id=<?= (int)$p['id'] ?>" class="btn btn-outline-danger btn-sm">
                             <i class="fa-solid fa-ban me-1"></i> Void
                         </a>
+                    <?php endif; ?>
+
+                    <?php
+                    $check = Payment::canCorrect($p['id']);
+                    if ($p['status'] === 'ACTIVE' && $check['ok'] && (user_can('payment.reverse') || user_can('*'))):
+                    ?>
+                        <a href="correct.php?id=<?= (int)$p['id'] ?>" class="btn btn-outline-warning btn-sm">
+                            <i class="fa-solid fa-sliders me-1"></i> Correct allocation
+                        </a>
+                    <?php elseif ($p['status'] === 'ACTIVE' && !$check['ok'] && (user_can('payment.reverse') || user_can('*'))): ?>
+                        <button class="btn btn-outline-secondary btn-sm" disabled title="<?= e($check['reason']) ?>">
+                            <i class="fa-solid fa-sliders me-1"></i> Correction not available
+                        </button>
+                    <?php endif; ?>
+                    <?php if ($p['status'] === 'VOIDED'):
+                        $v = Db::one("SELECT v.*, u.full_name AS uname FROM payment_voids v
+                  LEFT JOIN users u ON u.id = v.voided_by
+                  WHERE v.payment_id = :p ORDER BY v.id DESC LIMIT 1", ['p' => $p['id']]);
+                        if ($v): ?>
+                            <div class="alert alert-secondary py-2 small mt-3">
+                                <i class="fa-solid fa-circle-info me-1"></i>
+                                Voided by <strong><?= e($v['uname'] ?? '—') ?></strong>
+                                on <?= e($v['voided_at']) ?> —
+                                “<?= e($v['reason']) ?>”
+                            </div>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </div>
