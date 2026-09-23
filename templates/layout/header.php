@@ -97,8 +97,14 @@ $pageTitle = $pageTitle ?? 'Dashboard';
                     <i class="fa-solid fa-diagram-project me-2"></i> Center Report</a></li>
                 <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/reports/parish-report.php">
                     <i class="fa-solid fa-church me-2"></i> Parish Report</a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/reports/export-workbook.php">
+                    <i class="fa-solid fa-file-excel me-2"></i> Export Workbook (xlsx)</a></li>
 
               </ul>
+
 
 
             </li>

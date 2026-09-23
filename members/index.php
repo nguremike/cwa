@@ -16,6 +16,20 @@ $f = [
     'q'          => trim($_GET['q'] ?? ''),
 ];
 
+$m = Member::find($memberId);
+if (!$m) {
+    http_response_code(404);
+    exit('Member not found');
+}
+if (scope_center_id() && (int)$m['center_id'] !== scope_center_id()) {
+    http_response_code(403);
+    exit('Out of scope.');
+}
+if (scope_jumuiya_id() && (int)$m['jumuiya_id'] !== scope_jumuiya_id()) {
+    http_response_code(403);
+    exit('Out of scope.');
+}
+
 $members = [];
 
 if ($f['center_id'] || $f['jumuiya_id'] || $f['status'] || $f['q']) {

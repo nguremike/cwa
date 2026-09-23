@@ -95,3 +95,36 @@ function require_permission(string $permission): void
         exit;
     }
 }
+
+function scope_center_id(): ?int
+{
+    $u = $_SESSION['user'] ?? null;
+    if (!$u) return null;
+    if (in_array($u['role_name'] ?? '', ['SUPER_ADMIN', 'PARISH_ADMIN', 'VIEWER'], true)) {
+        return null; // no restriction
+    }
+    return $u['center_id'] ?? null;
+}
+
+function scope_jumuiya_id(): ?int
+{
+    $u = $_SESSION['user'] ?? null;
+    if (!$u) return null;
+    if (in_array($u['role_name'] ?? '', ['SUPER_ADMIN', 'PARISH_ADMIN', 'VIEWER', 'CENTER_ADMIN'], true)) {
+        return null; // center scope is enough for these roles
+    }
+    return $u['jumuiya_id'] ?? null;
+}
+
+/**
+ * Merge the current user's scope into a filter array. Any explicit
+ * filter that conflicts with the user's scope is overridden.
+ */
+function scope_filter(array $f): array
+{
+    $cid = scope_center_id();
+    $jid = scope_jumuiya_id();
+    if ($cid) $f['center_id']  = $cid;
+    if ($jid) $f['jumuiya_id'] = $jid;
+    return $f;
+}

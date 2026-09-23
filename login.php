@@ -10,23 +10,40 @@ if (Auth::check()) {
     header('Location: ' . $config['app']['url'] . '/dashboard/');
     exit;
 }
+if (isset($_GET['timeout']))  $error = 'Session timed out. Please sign in again.';
+if (isset($_GET['ipchange'])) $error = 'Your network address changed. Please sign in again.';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check($_POST['csrf'] ?? null);
+
+    require_once __DIR__ . '/classes/LoginThrottle.php';
+    LoginThrottle::prune();
+
     $username = trim($_POST['username'] ?? '');
     $password = (string)($_POST['password'] ?? '');
+    $ip       = $_SERVER['REMOTE_ADDR'] ?? null;
 
     if ($username === '' || $password === '') {
         $error = 'Enter your username and password.';
     } else {
-        $res = Auth::attempt($username, $password);
-        if ($res['ok']) {
-            $intended = $_SESSION['intended'] ?? null;
-            unset($_SESSION['intended']);
-            header('Location: ' . ($intended ?: $config['app']['url'] . '/dashboard/'));
-            exit;
+        $state = LoginThrottle::check($username, $ip);
+        if ($state['locked']) {
+            $mins = ceil($state['seconds_remaining'] / 60);
+            $error = "Too many failed attempts. Try again in {$mins} minute(s).";
+        } else {
+            $res = Auth::attempt($username, $password);
+            $_SESSION['last_seen']  = time();
+            $_SESSION['login_ip']   = $_SERVER['REMOTE_ADDR'] ?? null;
+            $_SESSION['rotated_at'] = time();
+            LoginThrottle::recordAttempt($username, $ip, $res['ok']);
+            if ($res['ok']) {
+                $intended = $_SESSION['intended'] ?? null;
+                unset($_SESSION['intended']);
+                header('Location: ' . ($intended ?: $config['app']['url'] . '/dashboard/'));
+                exit;
+            }
+            $error = $res['error'];
         }
-        $error = $res['error'];
     }
 }
 ?>
