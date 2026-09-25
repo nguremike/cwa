@@ -13,19 +13,7 @@ $f = [
     'q'          => trim($_GET['q']           ?? ''),
 ];
 
-$m = Member::find($memberId);
-if (!$m) {
-    http_response_code(404);
-    exit('Member not found');
-}
-if (scope_center_id() && (int)$m['center_id'] !== scope_center_id()) {
-    http_response_code(403);
-    exit('Out of scope.');
-}
-if (scope_jumuiya_id() && (int)$m['jumuiya_id'] !== scope_jumuiya_id()) {
-    http_response_code(403);
-    exit('Out of scope.');
-}
+$f = scope_filter($f);
 
 $report = Report::memberMatrix($f + ['type' => 'REGISTRATION']);
 
@@ -141,7 +129,9 @@ require __DIR__ . '/../templates/layout/header.php';
                     <thead class="table-light">
                         <tr>
                             <th rowspan="2" class="sticky-col">Member</th>
-                            <th rowspan="2" class="text-end">Renewal</th>
+                            <th rowspan="2" class="text-end">
+                                Renewal<span class="text-muted small d-block">(+ card)</span>
+                            </th>
                             <th colspan="12" class="text-center">Registration — Monthly</th>
                             <th rowspan="2" class="text-end">Paid</th>
                             <th rowspan="2" class="text-end">Balance</th>
@@ -165,9 +155,17 @@ require __DIR__ . '/../templates/layout/header.php';
                                     </div>
                                 </td>
                                 <td class="text-end">
-                                    <?php if ($r['due']['renewal'] > 0): ?>
-                                        <span class="<?= $r['balance']['renewal'] > 0 ? 'text-danger' : 'text-success' ?>">
-                                            <?= number_format($r['paid']['renewal'], 0) ?> / <?= number_format($r['due']['renewal'], 0) ?>
+                                    <?php
+                                    // Combine card into renewal for new members.
+                                    $renDue  = (float)$r['totals']['renewal_combined_due'];
+                                    $renPaid = (float)$r['totals']['renewal_combined_paid'];
+                                    $renBal  = (float)$r['totals']['renewal_combined_balance'];
+                                    $hasCard = !empty($r['totals']['has_card']);
+                                    ?>
+                                    <?php if ($renDue > 0): ?>
+                                        <span class="<?= $renBal > 0 ? 'text-danger' : 'text-success' ?>"
+                                            <?= $hasCard ? 'title="Renewal + Card fee combined"' : '' ?>>
+                                            <?= number_format($renPaid, 0) ?> / <?= number_format($renDue, 0) ?>
                                         </span>
                                     <?php else: ?>
                                         <span class="text-muted">—</span>
@@ -198,6 +196,17 @@ require __DIR__ . '/../templates/layout/header.php';
                     <tfoot>
                         <tr class="table-light">
                             <th class="sticky-col">Totals</th>
+                            <!-- <?php
+                                    //$sumCombinedDue  = 0.0;
+                                    //$sumCombinedPaid = 0.0;
+                                    // foreach ($report['rows'] as $rr) {
+                                    //     $sumCombinedDue  += (float)$rr['totals']['renewal_combined_due'];
+                                    //     $sumCombinedPaid += (float)$rr['totals']['renewal_combined_paid'];
+                                    // }
+                                    ?>
+                            <th class="text-end small">
+                                <//?= //number_format($sumCombinedPaid, 0) ?> / <//?= //number_format($sumCombinedDue, 0) ?>
+                            </th> -->
                             <th></th>
                             <?php for ($mo = 1; $mo <= 12; $mo++): ?><th></th><?php endfor; ?>
                             <th class="text-end"><?= number_format($report['totals']['paid'], 2) ?></th>

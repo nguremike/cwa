@@ -22,6 +22,10 @@ require_once __DIR__ . '/../classes/Member.php';
 require_once __DIR__ . '/../classes/Payment.php';
 require_once __DIR__ . '/../classes/AllocationEngine.php';
 require_once __DIR__ . '/../classes/Report.php';
+require_once __DIR__ . '/settings.php';
+require_once __DIR__ . '/../classes/ImportRunner.php';
+
+
 $vendor = __DIR__ . '/../vendor/autoload.php';
 if (is_file($vendor)) require_once $vendor;
 

@@ -139,6 +139,13 @@ require __DIR__ . '/../templates/layout/header.php';
                             </div>
                         <?php endif; ?>
                     <?php endif; ?>
+
+                    <?php if (!empty($_GET['pending'])): ?>
+                        <div class="alert alert-warning py-2 small">
+                            <i class="fa-solid fa-hourglass-half me-1"></i>
+                            Your void request is pending approval. You will be notified once it is decided.
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

@@ -233,6 +233,11 @@ class Report
             $totals['paid']    += $paidTotal;
             $totals['balance'] += $balTotal;
 
+            $renewalCombinedDue     = (float)$due['renewal'] + (float)$due['card'];
+            $renewalCombinedPaid    = (float)$pay['renewal'] + (float)$pay['card'];
+            $renewalCombinedBalance = max(0.0, $renewalCombinedDue - $renewalCombinedPaid);
+            $hasCard                = (float)$due['card'] > 0;
+
             $rows[] = [
                 'member'  => $m,
                 'due'     => $due,
@@ -242,6 +247,11 @@ class Report
                     'due'     => $dueTotal,
                     'paid'    => $paidTotal,
                     'balance' => $balTotal,
+                    // New keys — display only
+                    'renewal_combined_due'     => round($renewalCombinedDue, 2),
+                    'renewal_combined_paid'    => round($renewalCombinedPaid, 2),
+                    'renewal_combined_balance' => round($renewalCombinedBalance, 2),
+                    'has_card'                 => $hasCard,
                 ],
             ];
         }

@@ -51,6 +51,9 @@ class Auth
         );
 
         Audit::log('LOGIN', 'users', (int)$user['id'], null, null);
+        $_SESSION['last_seen']  = time();
+        $_SESSION['login_ip']   = $_SERVER['REMOTE_ADDR'] ?? null;
+        $_SESSION['rotated_at'] = time();
 
         return ['ok' => true];
     }

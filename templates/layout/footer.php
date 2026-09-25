@@ -14,5 +14,16 @@ window.CWA = {
 };
 </script>
 <script src="<?= e($config['app']['url']) ?>/assets/js/app.js"></script>
+   <script>
+      $(function() {
+        var $b = $('#pendingApprovalsBadge');
+        if (!$b.length) return;
+        $.getJSON(CWA.base + '/api/pending-approvals.php').done(function(r) {
+          if (r && r.count > 0) {
+            $b.text(r.count).show();
+          }
+        });
+      });
+    </script>
 </body>
 </html>

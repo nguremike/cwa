@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     if ($data['full_name'] === '')  $errors[] = 'Full name is required.';
-    if ($data['phone'] === '')      $errors[] = 'Phone is required.';
+    // if ($data['phone'] === '')      $errors[] = 'Phone is required.';
     if ($data['jumuiya_id'] <= 0)   $errors[] = 'Jumuiya is required.';
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $data['join_date'])) $errors[] = 'Join date is required.';
 
@@ -66,30 +66,12 @@ require __DIR__ . '/../templates/layout/header.php';
                 value="<?= e($_POST['full_name'] ?? '') ?>">
         </div>
         <div class="col-md-6">
-            <label class="form-label small">Phone *</label>
-            <input name="phone" class="form-control" required
+            <label class="form-label small">Phone </label>
+            <input name="phone" class="form-control"
                 value="<?= e($_POST['phone'] ?? '') ?>">
         </div>
 
-        <div class="col-md-4">
-            <label class="form-label small">National ID</label>
-            <input name="id_number" class="form-control"
-                value="<?= e($_POST['id_number'] ?? '') ?>">
-        </div>
-        <div class="col-md-4">
-            <label class="form-label small">Date of birth</label>
-            <input name="date_of_birth" type="date" class="form-control"
-                value="<?= e($_POST['date_of_birth'] ?? '') ?>">
-        </div>
-        <div class="col-md-4">
-            <label class="form-label small">Gender</label>
-            <select name="gender" class="form-select">
-                <option value="">—</option>
-                <?php foreach (['FEMALE', 'MALE', 'OTHER'] as $g): ?>
-                    <option value="<?= $g ?>" <?= ($_POST['gender'] ?? '') === $g ? 'selected' : '' ?>><?= $g ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+
 
         <div class="col-md-4">
             <label class="form-label small">Center *</label>
@@ -113,6 +95,26 @@ require __DIR__ . '/../templates/layout/header.php';
             <label class="form-label small">Join date *</label>
             <input name="join_date" type="date" class="form-control" required
                 value="<?= e($_POST['join_date'] ?? date('Y-m-d')) ?>">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label small">National ID</label>
+            <input name="id_number" class="form-control"
+                value="<?= e($_POST['id_number'] ?? '') ?>">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label small">Date of birth</label>
+            <input name="date_of_birth" type="date" class="form-control"
+                value="<?= e($_POST['date_of_birth'] ?? '') ?>">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label small">Gender</label>
+            <select name="gender" class="form-select">
+                <option value="">—</option>
+                <?php foreach (['FEMALE', 'MALE', 'OTHER'] as $g): ?>
+                    <option value="<?= $g ?>" <?= ($_POST['gender'] ?? '') === $g ? 'selected' : '' ?>><?= $g ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
 
         <div class="col-12">

@@ -62,7 +62,20 @@ $pageTitle = $pageTitle ?? 'Dashboard';
                   <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/payments/create.php">
                       <i class="fa-solid fa-plus me-2"></i> Record Contribution</a></li>
                 <?php endif; ?>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <?php if (user_can('payment.create') || user_can('*')): ?>
+                  <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/imports/upload.php">
+                      <i class="fa-solid fa-file-import me-2"></i> Import Payments</a></li>
+                <?php endif; ?>
+                <?php if (user_can('payment.view') || user_can('*')): ?>
+                  <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/imports/batches.php">
+                      <i class="fa-solid fa-clock-rotate-left me-2"></i> Import Batches</a></li>
+                <?php endif; ?>
+
               </ul>
+
             </li>
           <?php endif; ?>
 
@@ -148,16 +161,34 @@ $pageTitle = $pageTitle ?? 'Dashboard';
                   <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/roles/">
                       <i class="fa-solid fa-key me-2"></i> Roles</a></li>
                 <?php endif; ?>
+                <?php if (in_array($_SESSION['user']['role_name'] ?? '', ['SUPER_ADMIN', 'PARISH_ADMIN'], true)): ?>
+                  <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/approvals/">
+                      <i class="fa-solid fa-clipboard-check me-2"></i> Approvals
+                      <span id="pendingApprovalsBadge" class="badge bg-danger ms-1" style="display:none"></span>
+                    </a></li>
+                <?php endif; ?>
                 <?php if (user_can('audit.view') || user_can('*')): ?>
                   <li>
                     <hr class="dropdown-divider">
                   </li>
                   <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/audit/">
                       <i class="fa-solid fa-clipboard-list me-2"></i> Audit Log</a></li>
+                  <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/self-check/">
+                      <i class="fa-solid fa-heart-pulse me-2"></i> Self-check</a></li>
+
+                  <?php if (user_can('settings.edit') || user_can('*')): ?>
+                    <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/settings/security.php">
+                        <i class="fa-solid fa-shield-halved me-2"></i> Security Settings</a></li>
+                  <?php endif; ?>
+                  <?php if (user_can('settings.edit') || user_can('*')): ?>
+                    <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/admin/backups/">
+                        <i class="fa-solid fa-database me-2"></i> Backups</a></li>
+                  <?php endif; ?>
                 <?php endif; ?>
+              <?php endif; ?>
               </ul>
             </li>
-          <?php endif; ?>
+
         </ul>
 
         <?php if ($user): ?>

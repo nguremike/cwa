@@ -2,8 +2,8 @@
 class LoginThrottle
 {
     public const WINDOW_MINUTES = 15;
-    public const MAX_ATTEMPTS   = 5;
-    public const LOCK_MINUTES   = 15;
+    public const MAX_ATTEMPTS   = 10;
+    public const LOCK_MINUTES   = 3;
 
     public static function recordAttempt(string $identifier, ?string $ip, bool $success): void
     {
@@ -17,7 +17,7 @@ class LoginThrottle
     /** @return array{locked:bool, seconds_remaining:int, failures:int} */
     public static function check(string $identifier, ?string $ip): array
     {
-        $since = date('Y-m-d H:i:s', time() - self::WINDOW_MINUTES * 60);
+        $since = date('Y-m-d H:i:s', time() - self::windowMinutes() * 60);
 
         $idFailures = (int)(Db::one(
             "SELECT COUNT(*) c FROM login_attempts
@@ -32,7 +32,7 @@ class LoginThrottle
         )['c'] ?? 0) : 0;
 
         $failures = max($idFailures, $ipFailures);
-        if ($failures < self::MAX_ATTEMPTS) {
+        if ($failures < self::maxAttempts()) {
             return ['locked' => false, 'seconds_remaining' => 0, 'failures' => $failures];
         }
 
@@ -44,7 +44,7 @@ class LoginThrottle
               ORDER BY id DESC LIMIT 1",
             $ip ? ['i' => strtolower($identifier), 'ip' => $ip] : ['i' => strtolower($identifier)]
         );
-        $unlockAt = strtotime($last['created_at']) + self::LOCK_MINUTES * 60;
+        $unlockAt = strtotime($last['created_at']) + self::lockMinutes() * 60;
         $remaining = max(0, $unlockAt - time());
 
         return ['locked' => $remaining > 0, 'seconds_remaining' => $remaining, 'failures' => $failures];
@@ -55,5 +55,18 @@ class LoginThrottle
     {
         $cutoff = date('Y-m-d H:i:s', time() - 86400);
         Db::q("DELETE FROM login_attempts WHERE created_at < :c", ['c' => $cutoff]);
+    }
+
+    private static function windowMinutes(): int
+    {
+        return setting_int('login_window_minutes', 15);
+    }
+    private static function maxAttempts(): int
+    {
+        return setting_int('login_max_attempts', 5);
+    }
+    private static function lockMinutes(): int
+    {
+        return setting_int('login_lock_minutes', 15);
     }
 }

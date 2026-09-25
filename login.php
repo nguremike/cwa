@@ -10,6 +10,7 @@ if (Auth::check()) {
     header('Location: ' . $config['app']['url'] . '/dashboard/');
     exit;
 }
+
 if (isset($_GET['timeout']))  $error = 'Session timed out. Please sign in again.';
 if (isset($_GET['ipchange'])) $error = 'Your network address changed. Please sign in again.';
 
@@ -32,9 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "Too many failed attempts. Try again in {$mins} minute(s).";
         } else {
             $res = Auth::attempt($username, $password);
-            $_SESSION['last_seen']  = time();
-            $_SESSION['login_ip']   = $_SERVER['REMOTE_ADDR'] ?? null;
-            $_SESSION['rotated_at'] = time();
             LoginThrottle::recordAttempt($username, $ip, $res['ok']);
             if ($res['ok']) {
                 $intended = $_SESSION['intended'] ?? null;

@@ -14,9 +14,26 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check($_POST['csrf'] ?? null);
     $reason = trim($_POST['reason'] ?? '');
-    if ($reason === '') $errors[] = 'Reason is required.';
 
-    if (!$errors) {
+    require_once __DIR__ . '/../classes/ReversalGuard.php';
+    $state = ReversalGuard::canVoid($id, $reason);
+
+    if (!$state['allowed'] && !$state['needs_approval']) {
+        $errors[] = $state['reason'];
+    } elseif ($state['needs_approval']) {
+        try {
+            ReversalGuard::createApproval($id, $reason);
+            Audit::log('UPDATE', 'approval_requests', null, null, [
+                'payment_id' => $id,
+                'amount' => (float)$p['amount'],
+                'reason' => $reason,
+            ]);
+            header('Location: receipt.php?id=' . $id . '&pending=1');
+            exit;
+        } catch (Throwable $e) {
+            $errors[] = 'Could not create approval request: ' . $e->getMessage();
+        }
+    } else {
         try {
             Payment::void($id, $reason, Auth::id());
             header('Location: receipt.php?id=' . $id);
