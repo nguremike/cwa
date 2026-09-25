@@ -62,17 +62,23 @@ $pageTitle = $pageTitle ?? 'Dashboard';
                   <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/payments/create.php">
                       <i class="fa-solid fa-plus me-2"></i> Record Contribution</a></li>
                 <?php endif; ?>
-                <li>
+                <!-- <li>
                   <hr class="dropdown-divider">
                 </li>
-                <?php if (user_can('payment.create') || user_can('*')): ?>
-                  <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/imports/upload.php">
+                <?php //if (user_can('payment.create') || user_can('*')): 
+                ?>
+                  <li><a class="dropdown-item" href="<? //= //e($config['app']['url']) 
+                                                      ?>/imports/upload.php">
                       <i class="fa-solid fa-file-import me-2"></i> Import Payments</a></li>
-                <?php endif; ?>
-                <?php if (user_can('payment.view') || user_can('*')): ?>
-                  <li><a class="dropdown-item" href="<?= e($config['app']['url']) ?>/imports/batches.php">
+                <?php //endif; 
+                ?>
+                <?php //if (user_can('payment.view') || user_can('*')): 
+                ?>
+                  <li><a class="dropdown-item" href="<? //= //e($config['app']['url']) 
+                                                      ?>/imports/batches.php">
                       <i class="fa-solid fa-clock-rotate-left me-2"></i> Import Batches</a></li>
-                <?php endif; ?>
+                <?php //endif; 
+                ?> -->
 
               </ul>
 

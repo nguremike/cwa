@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     if ($data['full_name'] === '') $errors[] = 'Full name is required.';
-    if ($data['phone'] === '')     $errors[] = 'Phone is required.';
+    // if ($data['phone'] === '')     $errors[] = 'Phone is required.';
 
     if (!$errors) {
         $dup = Db::one(
@@ -71,7 +71,7 @@ require __DIR__ . '/../templates/layout/header.php';
             <input name="full_name" class="form-control" required value="<?= e($m['full_name']) ?>">
         </div>
         <div class="col-md-6">
-            <label class="form-label small">Phone *</label>
+            <label class="form-label small">Phone</label>
             <input name="phone" class="form-control" required value="<?= e($m['phone']) ?>">
         </div>
 

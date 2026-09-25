@@ -148,11 +148,12 @@ require __DIR__ . '/../templates/layout/header.php';
                         ?>
                             <tr>
                                 <td class="sticky-col">
-                                    <div><strong><?= e($m['full_name']) ?></strong></div>
-                                    <div class="text-muted small">
-                                        <?= e($m['member_code']) ?> ·
-                                        <?= e($m['jumuiya_name']) ?>
-                                    </div>
+                                    <div><strong><?= e($m['full_name']) ?></strong> <span class="text-muted small">
+                                            <!-- <? //= e($m['member_code']) 
+                                                    ?> --> -
+                                            <?= e($m['jumuiya_name']) ?>
+                                        </span></div>
+
                                 </td>
                                 <td class="text-end">
                                     <?php
